@@ -18,6 +18,8 @@ max_number_rolls = 21
 sad_dice_king_file_path = 'pictures/dice_king/sad_dice_king.png'
 temp_file_path = 'pictures/temp/combined.png'
 
+help_me_string = "I'm King Dice, proprietor of this server. Your one and only stop for all dice-related needs. Here is how to use me, and good luck friend!\n\n!dice – roll a regular 6-sided die \n!craps – rolls 2 6-sided die\n!ceelo – rolls 3 6-sided die\n!20 – rolls a d20 die, also works for 12/10/8/6/4\n!100 – rolls 2d10, one for the first digit and one for the second (000 is 100)\n\nAnd don’t even think about doing a number after the exclamation mark that isn’t listed above this.. "
+
 async def roll_dice(message,folder_name,dice_max_size,num_of_dice):
     if dice_max_size == 100:
         dice_roll = random.randrange(1,dice_max_size + 1)
@@ -110,7 +112,7 @@ async def on_message(message):
             else:
                 dice_folder_name = "pictures/white_dice/"
 
-            if user_command[0] == "dice":
+            if user_command[0].lower() == "dice":
                 num_rolls = 1
                 if len(user_command) > 1:
                     if user_command[1].isdigit():
@@ -119,9 +121,10 @@ async def on_message(message):
                     await roll_dice(message,dice_folder_name,reg_dice_max,num_rolls)
                 else:
                     await message.channel.send(file=discord.File(sad_dice_king_file_path))
-            elif user_command[0] == "craps":
+            elif user_command[0].lower() == "craps":
                 await roll_dice(message,dice_folder_name,reg_dice_max,num_rolls_craps)
-            elif user_command[0] == "cee-lo" or user_command[0] == "ceelo":
+            elif user_command[0].lower() == "cee-lo" or user_command[0] == "ceelo":
                 await roll_dice(message,dice_folder_name,reg_dice_max,num_rolls_ceelo)
-
+            elif user_command[0].lower() == "dicehelp":
+                await message.channel.send(help_me_string)
 client.run(TOKEN)
