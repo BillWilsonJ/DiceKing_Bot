@@ -100,7 +100,7 @@ async def on_message(message):
             else:
                 dice_folder_name = constant.WHITE_DICE_FOLDER_PATH
 
-            if user_command[0].lower() == "dice":
+            if user_command[0].lower() in constant.DICE_COMMAND_LIST:
                 num_rolls = 1
                 if len(user_command) > 1:
                     if user_command[1].isdigit():
@@ -109,11 +109,11 @@ async def on_message(message):
                     await roll_dice(message,dice_folder_name,constant.REG_DICE_MAX,num_rolls)
                 else:
                     await message.channel.send(file=discord.File(constant.SAD_DICE_KING_FILE_PATH))
-            elif user_command[0].lower() == "craps":
+            elif user_command[0].lower() in constant.CRAPS_COMMAND_LIST:
                 await roll_dice(message,dice_folder_name,constant.REG_DICE_MAX,constant.NUM_ROLLS_CRAPS)
-            elif user_command[0].lower() == "cee-lo" or user_command[0] == "ceelo":
+            elif user_command[0].lower() in constant.CEELO_COMMAND_LIST:
                 await roll_dice(message,dice_folder_name,constant.REG_DICE_MAX,constant.NUM_ROLLS_CEELO)
-            elif user_command[0].lower() == "coin" or user_command[0] == "coinflip":
+            elif user_command[0].lower() in constant.COIN_COMMAND_LIST:
                 num_rolls = 1
                 if len(user_command) > 1:
                     if user_command[1].isdigit():
@@ -122,7 +122,7 @@ async def on_message(message):
                     await roll_dice(message,constant.COIN_FOLDER_PATH,constant.COIN_MAX,num_rolls)
                 else:
                     await message.channel.send(file=discord.File(constant.SAD_DICE_KING_FILE_PATH))
-            elif user_command[0].lower() == "dicehelp":
+            elif user_command[0].lower() in constant.HELP_COMMAND_LIST:
                 await message.channel.send(constant.HELP_ME_STRING)
 
 client.run(TOKEN)
