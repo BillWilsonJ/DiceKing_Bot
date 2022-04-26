@@ -49,7 +49,13 @@ async def roll_dice(message,folder_name,dice_max_size,num_of_dice):
 
     else:
         dice_roll = random.randrange(1,dice_max_size  + 1)
-        image_file_name = folder_name + str(dice_roll) + ".png"
+        if dice_max_size == 2:
+            if dice_roll == 1:
+                image_file_name = folder_name + "heads.png"
+            else:
+                image_file_name = folder_name + "tails.png"
+        else:
+            image_file_name = folder_name + str(dice_roll) + ".png"
         await message.channel.send(file=discord.File(image_file_name))
 
 load_dotenv()
