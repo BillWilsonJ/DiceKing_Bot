@@ -4,6 +4,7 @@ DICE_COMMAND_LIST = ['dice']
 CRAPS_COMMAND_LIST = ['craps']
 CEELO_COMMAND_LIST = ['cee-lo','ceelo']
 COIN_COMMAND_LIST = ['coin','coinflip','flip']
+ALL_COMMAND_LIST = ['diceall','alldice']
 HELP_COMMAND_LIST = ['dicehelp']
 
 # useful numbers

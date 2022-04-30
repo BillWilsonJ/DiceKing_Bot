@@ -13,6 +13,8 @@ async def roll_dice(message,folder_name,dice_max_size,num_of_dice):
         dice_roll = random.randrange(1,dice_max_size + 1)
         dice_roll_tens = dice_roll // 10
         dice_roll_single = dice_roll % 10
+        if dice_roll_tens == 10:
+            dice_roll_tens = 0
         image_file_name_tens = folder_name + str(dice_roll_tens) + "0.png"
         image_file_name_single = folder_name + str(dice_roll_single) + ".png"
         image_1 = Image.open(image_file_name_tens)
@@ -57,6 +59,74 @@ async def roll_dice(message,folder_name,dice_max_size,num_of_dice):
         else:
             image_file_name = folder_name + str(dice_roll) + ".png"
         await message.channel.send(file=discord.File(image_file_name))
+
+async def all_dice(message):
+
+    images = []
+    width = 0
+    height = 0
+    # All Special Dice
+    for dice in constant.DICE_NUMBER_LIST:
+        dice_roll = random.randrange(1,dice + 1)
+        dice_folder_name = "pictures/d" + str(dice) + "/"
+        if dice == 100:
+            dice_roll_tens = dice_roll // 10
+            dice_roll_single = dice_roll % 10
+            if dice_roll_tens == 10:
+                dice_roll_tens = 0
+            image_file_name_tens = dice_folder_name + str(dice_roll_tens) + "0.png"
+            image_file_name_single = dice_folder_name + str(dice_roll_single) + ".png"
+            image_1 = Image.open(image_file_name_tens)
+            image_2 = Image.open(image_file_name_single)
+            width = width + image_1.width
+            width = width + image_2.width
+            images.append(image_1)
+            images.append(image_2)
+        else:
+            image_file_name = image_file_name = dice_folder_name + str(dice_roll) + ".png"
+            image = Image.open(image_file_name)
+            width = width + image.width
+            if height == 0:
+                height = image.height
+            images.append(image)
+
+    # 2 Regular Dice
+    for x in range(2):
+        if x == 1:
+            dice_folder_name = constant.BLACK_DICE_FOLDER_PATH
+        else:
+            dice_folder_name = constant.WHITE_DICE_FOLDER_PATH
+        dice_roll = random.randrange(1,constant.REG_DICE_MAX + 1)
+        image_file_name = image_file_name = dice_folder_name + str(dice_roll) + ".png"
+        image = Image.open(image_file_name)
+        width = width + image.width
+        if height == 0:
+            height = image.height
+        images.append(image)
+
+    # Coin
+    dice_roll = random.randrange(1,constant.COIN_MAX + 1)
+    dice_folder_name = constant.COIN_FOLDER_PATH
+    if dice_roll == 1:
+        image_file_name = dice_folder_name + "heads.png"
+    else:
+        image_file_name = dice_folder_name + "tails.png"
+
+    image = Image.open(image_file_name)
+    width = width + image.width
+    if height == 0:
+        height = image.height
+    images.append(image)
+
+    image_combined = Image.new('RGBA', (width, height))
+    width = 0
+    for image in images:
+        image_combined.paste(image,(width,0))
+        width = width + image.width
+
+    image_combined.save(constant.TEMP_FILE_PATH)
+    await message.channel.send(file=discord.File(constant.TEMP_FILE_PATH))
+    os.remove(constant.TEMP_FILE_PATH)
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -128,6 +198,8 @@ async def on_message(message):
                     await roll_dice(message,constant.COIN_FOLDER_PATH,constant.COIN_MAX,num_rolls)
                 else:
                     await message.channel.send(file=discord.File(constant.SAD_DICE_KING_FILE_PATH))
+            elif user_command[0].lower() in constant.ALL_COMMAND_LIST:
+                await all_dice(message)
             elif user_command[0].lower() in constant.HELP_COMMAND_LIST:
                 await message.channel.send(constant.HELP_ME_STRING)
 
