@@ -2,6 +2,7 @@
 import os
 import random
 from PIL import Image
+from interactions import Permissions
 import constant
 from datetime import datetime, timedelta
 import re
@@ -747,6 +748,13 @@ async def start_remindme_timer(message,wait_time,unit,reply_message):
     RemindMe_Timers.append(new_timer)
     write_timer_to_file(new_timer)
 
+async def is_message_deleted(ctx, message_id):
+    try:
+        await ctx.fetch_message(message_id) #try to fetch the message
+        return False
+    except:
+        return True
+
 async def roll_dice(message,folder_name,dice_max_size,num_of_dice):
     
     if dice_max_size == 100:
@@ -872,7 +880,8 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
-client = discord.Client()
+intents = discord.Intents().all()
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
@@ -951,11 +960,30 @@ async def on_message(message):
             elif user_command[0].lower() in constant.HELP_COMMAND_LIST:
                 await message.channel.send(constant.HELP_ME_STRING)
 
+@client.event
+async def on_raw_reaction_add(payload):
+    if payload.emoji.name == 'redcard':
+        channel = client.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        for reaction in message.reactions:
+            if reaction.emoji.name == "redcard":
+                if reaction.count == 7:
+                    delta = timedelta(hours=24)
+                    user_id = reaction.message.author.id
+                    guild = reaction.message.guild
+                    member = guild.get_member(user_id)
+                    await member.timeout(delta)
+
 @tasks.loop(seconds=1)
 async def check_remindme():
     for remind_me in RemindMe_Timers:
         if remind_me.time < datetime.now():
-            await remind_me.message.channel.send(remind_me.reply_message, reference=remind_me.message)
+            message_deleted = False
+            message_deleted = await is_message_deleted(remind_me.message.channel,remind_me.message_id)
+            if message_deleted:
+                await remind_me.message_channel.send("Message Was deleted")
+            else:
+                await remind_me.message.channel.send(remind_me.reply_message, reference=remind_me.message)
             remove_timer_to_file(remind_me)
             RemindMe_Timers.remove(remind_me)
 
