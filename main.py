@@ -972,7 +972,22 @@ async def on_raw_reaction_add(payload):
                     user_id = reaction.message.author.id
                     guild = reaction.message.guild
                     member = guild.get_member(user_id)
-                    await member.timeout(delta)
+                    if member.is_timed_out() == False:
+                        await member.timeout(delta)
+                        await reaction.message.channel.send(file=discord.File(constant.BANNED_DICE_KING_FILE_PATH), reference=reaction.message)
+    if payload.emoji.name == 'yellowcard':
+        channel = client.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        for reaction in message.reactions:
+            if reaction.emoji.name == "yellowcard":
+                if reaction.count == 7:
+                    delta = timedelta(hours=1)
+                    user_id = reaction.message.author.id
+                    guild = reaction.message.guild
+                    member = guild.get_member(user_id)
+                    if member.is_timed_out() == False:
+                        await member.timeout(delta)
+                        await reaction.message.channel.send(file=discord.File(constant.BANNED_DICE_KING_FILE_PATH), reference=reaction.message)
 
 @tasks.loop(seconds=1)
 async def check_remindme():

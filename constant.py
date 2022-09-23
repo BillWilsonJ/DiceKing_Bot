@@ -20,6 +20,7 @@ BLACK_DICE_FOLDER_PATH = "pictures/black_dice/"
 WHITE_DICE_FOLDER_PATH = "pictures/white_dice/"
 COIN_FOLDER_PATH = 'pictures/coin/'
 SAD_DICE_KING_FILE_PATH = 'pictures/dice_king/sad_dice_king.png'
+BANNED_DICE_KING_FILE_PATH = 'pictures/dice_king/banned_dice_king.gif'
 TEMP_FILE_PATH = 'pictures/temp/combined.png'
 
 # printed strings
